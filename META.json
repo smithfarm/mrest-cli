@@ -4,7 +4,7 @@
       "Nathan Cutler <ncutler@suse.cz>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4205",
+   "generated_by" : "Module::Build version 0.4212",
    "license" : [
       "bsd"
    ],
@@ -43,6 +43,7 @@
             "LWP::Protocol::https" : "6.04",
             "LWP::UserAgent" : "6.05",
             "Log::Any::Adapter" : "0",
+            "Params::Validate" : "0",
             "Pod::Usage" : "0",
             "Term::ReadLine" : "0",
             "Test::Deep" : "0",
@@ -55,7 +56,7 @@
    "provides" : {
       "Web::MREST::CLI" : {
          "file" : "lib/Web/MREST/CLI.pm",
-         "version" : "0.275"
+         "version" : "0.276"
       },
       "Web::MREST::CLI::Parser" : {
          "file" : "lib/Web/MREST/CLI/Parser.pm"
@@ -67,8 +68,8 @@
    "release_status" : "stable",
    "resources" : {
       "license" : [
-         "http://opensource.org/licenses/BSD-3-Clause"
+         "http://opensource.org/licenses/bsd-license.php"
       ]
    },
-   "version" : "0.275"
+   "version" : "0.276"
 }

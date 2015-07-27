@@ -3,3 +3,7 @@ Revision history for Web::MREST::CLI
 0.275  2015-07-27 13:31 CEST
 - Split off from Web::MREST
 
+0.276  2015-07-27 21:24 CEST
+- UserAgent.pm: be much more careful about arguments sent to send_req()
+- Build.PL: declare Params::Validate dependency
+

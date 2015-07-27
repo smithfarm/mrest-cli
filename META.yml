@@ -9,7 +9,7 @@ build_requires:
 configure_requires:
   Module::Build: '0'
 dynamic_config: 1
-generated_by: 'Module::Build version 0.4205, CPAN::Meta::Converter version 2.142060'
+generated_by: 'Module::Build version 0.4212, CPAN::Meta::Converter version 2.142060'
 license: bsd
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -21,7 +21,7 @@ no_index:
 provides:
   Web::MREST::CLI:
     file: lib/Web/MREST/CLI.pm
-    version: '0.275'
+    version: '0.276'
   Web::MREST::CLI::Parser:
     file: lib/Web/MREST/CLI/Parser.pm
   Web::MREST::CLI::UserAgent:
@@ -37,6 +37,7 @@ requires:
   LWP::Protocol::https: '6.04'
   LWP::UserAgent: '6.05'
   Log::Any::Adapter: '0'
+  Params::Validate: '0'
   Pod::Usage: '0'
   Term::ReadLine: '0'
   Test::Deep: '0'
@@ -44,5 +45,5 @@ requires:
   URI::Escape: '0'
   perl: '5.012'
 resources:
-  license: http://opensource.org/licenses/BSD-3-Clause
-version: '0.275'
+  license: http://opensource.org/licenses/bsd-license.php
+version: '0.276'
