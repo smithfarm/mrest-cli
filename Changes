@@ -1,0 +1,5 @@
+Revision history for Web::MREST::CLI
+
+0.275  2015-07-27 13:31 CEST
+- Split off from Web::MREST
+
