@@ -47,6 +47,7 @@ my $builder = Module::Build->new(
         'Log::Any::Adapter' => 0,
         'LWP::UserAgent' => 6.05,
         'LWP::Protocol::https' => 6.04,
+        'Params::Validate' => 0,
         'Pod::Usage'     => 0,
         'Term::ReadLine' => 0,
         'Test::Deep'     => 0,
