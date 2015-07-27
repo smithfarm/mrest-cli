@@ -4,6 +4,8 @@ Revision history for Web::MREST::CLI
 - Split off from Web::MREST
 
 0.276  2015-07-27 21:24 CEST
-- UserAgent.pm: be much more careful about arguments sent to send_req()
+- UserAgent.pm: validate arguments sent to send_req(), and explicitly set
+  entity body to an empty string if it is undefined
+  ( fixes https://github.com/smithfarm/dochazka-cli/issues/7 )
 - Build.PL: declare Params::Validate dependency
 
