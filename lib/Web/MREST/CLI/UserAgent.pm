@@ -53,6 +53,7 @@ use LWP::UserAgent;
 use LWP::Protocol::https;
 #print "LWP::UserAgent: ".LWP::UserAgent->VERSION,"\n";
 #print "LWP::Protocol::https: ".LWP::Protocol::https->VERSION,"\n";
+use Params::Validate qw( :all );
 use URI::Escape;
 
 my %sh;
@@ -162,8 +163,18 @@ return it to caller. Die on unexpected errors.
 sub send_req {
     no strict 'refs';
     # process arguments
-    my ( $method, $path, $body_data ) = @_;
-    
+    my ( $method, $path, $body_data ) = validate_pos( @_,
+        { type => SCALAR },
+        { type => SCALAR },
+        { type => SCALAR|UNDEF, optional => 1 },
+    );
+    $log->debug( "Entering " . __PACKAGE__ . "::send_req with $method $path" );
+    if ( ! defined( $body_data ) ) {
+        # HTTP::Message 6.10 complains if request content is undefined
+        $log->debug( "No request content given; setting to empty string" );
+        $body_data = '';
+    }
+
     # initialize suppressed headers hash %sh
     map { 
         $log->debug( "Suppressing header $_" );
