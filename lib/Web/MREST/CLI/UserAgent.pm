@@ -46,6 +46,7 @@ use App::CELL qw( $CELL $log $site $meta );
 use Data::Dumper;
 use Encode;
 use Exporter qw( import );
+use File::HomeDir;
 use File::Spec;
 use HTTP::Request::Common qw( GET PUT POST DELETE );
 use JSON;
