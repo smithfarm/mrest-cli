@@ -40,9 +40,20 @@ use 5.012;
 use strict;
 use warnings;
 
+use App::CELL qw( $CELL $log $site $meta );
+use Data::Dumper;
+use Encode;
 use Exporter qw( import );  # Exporter was first released with perl 5
 use File::HomeDir;    # File::HomeDir was not in CORE (or so I think)
 use File::Spec;       # File::Spec was first released with perl 5.00405
+use HTTP::Request::Common qw( GET PUT POST DELETE );
+use JSON;
+use LWP::UserAgent;
+use LWP::Protocol::https;
+#print "LWP::UserAgent: ".LWP::UserAgent->VERSION,"\n";
+#print "LWP::Protocol::https: ".LWP::Protocol::https->VERSION,"\n";
+use Params::Validate qw( :all );
+use URI::Escape;
 
 
 
@@ -79,12 +90,38 @@ writing CLI clients in general.
 
 =cut
 
-our @EXPORT_OK = qw( normalize_filespec );
+our @EXPORT_OK = qw( init_cli_client normalize_filespec send_req );
+
+
+
+
+=head1 PACKAGE VARIABLES
+
+=cut
+
+# user agent
+my $ua = LWP::UserAgent->new( 
+    ssl_opts => { 
+        verify_hostname => 1, 
+    }
+);
+
+# dispatch table with references to HTTP::Request::Common functions
+my %methods = ( 
+    GET => \&GET,
+    PUT => \&PUT,
+    POST => \&POST,
+    DELETE => \&DELETE,
+);
+
+my %sh;
+our $JSON = JSON->new->allow_nonref->convert_blessed->utf8->pretty;
 
 
 
 
 =head1 FUNCTIONS
+
 
 =head2 normalize_filespec
 
@@ -103,5 +140,119 @@ sub normalize_filespec {
     return File::Spec->catfile( File::HomeDir->my_home, $fs );
 }
 
+
+=head2 init_ua
+
+Initialize the LWP::UserAgent singleton object.
+
+=cut
+
+sub init_ua {
+    $ua->cookie_jar( { file => normalize_filespec( $site->MREST_CLI_COOKIE_JAR ) } );
+    return;
+}
+
+
+=head2 cookie_jar
+
+Return the cookie_jar associated with our user agent.
+
+=cut
+
+sub cookie_jar { $ua->cookie_jar };
+
+
+=head2 send_req
+
+Send a request to the server, get the response, convert it from JSON, and
+return it to caller. Die on unexpected errors.
+
+=cut
+
+sub send_req {
+    no strict 'refs';
+    # process arguments
+    my ( $method, $path, $body_data ) = validate_pos( @_,
+        { type => SCALAR },
+        { type => SCALAR },
+        { type => SCALAR|UNDEF, optional => 1 },
+    );
+    $log->debug( "Entering " . __PACKAGE__ . "::send_req with $method $path" );
+    if ( ! defined( $body_data ) ) {
+        # HTTP::Message 6.10 complains if request content is undefined
+        $log->debug( "No request content given; setting to empty string" );
+        $body_data = '';
+    }
+
+    # initialize suppressed headers hash %sh
+    map { 
+        $log->debug( "Suppressing header $_" );
+        $sh{ lc $_ } = ''; 
+    } @{ $site->MREST_CLI_SUPPRESSED_HEADERS } unless %sh;
+
+    $path = "/$path" unless $path =~ m/^\//;
+    $log->debug("send_req: path is $path");
+
+    # convert body data to UTF-8
+    my $encoded_body_data = encode( "UTF-8", $body_data );
+
+    # assemble request
+    my $url = $meta->MREST_CLI_URI_BASE || 'http://localhost:5000';
+    $url .= uri_escape( $path, '%' );
+    $log->debug( "Encoded URI is $url" );
+    my $r = $methods{$method}->( 
+        $url,
+        Accept => 'application/json',
+        Content_Type => 'application/json',
+        Content => $body_data,
+    );
+
+    # add basic auth
+    my $user = $meta->CURRENT_EMPLOYEE_NICK || 'demo';
+    my $password = $meta->CURRENT_EMPLOYEE_PASSWORD || 'demo';
+    $log->debug( "send_req: basic auth user $user / pass $password" );
+    $r->authorization_basic( $user, $password );
+
+    # send request, get response
+    my $response = $ua->request( $r );
+    $log->debug( "Response is " . Dumper( $response ) );
+    my $code = $response->code;
+
+    # process response entity
+    my $status;
+    my $content = $response->content;
+    #$log->debug( "Response entity is " . Dumper( $content ) );
+    if ( $content ) {
+        my $unicode_content = decode( "UTF-8", $content );
+
+        # if the content is a bare string, enclose it in double quotes
+        if ( $unicode_content =~ m/^[^\{].*[^\}]$/s ) {
+            $unicode_content =~ s/\n//g;
+            $log->debug( "Adding double quotes to bare JSON string" );
+            $unicode_content = '"' . $unicode_content . '"';
+        }
+
+        my $perl_scalar = $JSON->decode( $unicode_content );
+
+        if ( ref( $perl_scalar ) ) {
+            # if it's a hash, we have faith that it will bless into a status object
+            $status = bless $perl_scalar, 'App::CELL::Status';
+        } else { 
+            $status = $CELL->status_err( 'MREST_OTHER_ERROR_REPORT_THIS_AS_A_BUG', payload => $perl_scalar );
+            $log->error("Unexpected HTTP response ->$perl_scalar<-" );
+        }
+    } else {
+        $status = $CELL->status_warn( 'MREST_CLI_HTTP_REQUEST_OK_NODATA' );
+    }
+    $status->{'http_status'} = $response->code . ' ' . $response->message;
+
+    # load up headers
+    $status->{'headers'} = {};
+    $response->headers->scan( sub {
+        my ( $h, $v ) = @_;
+        $status->{'headers'}->{$h} = $v unless exists $sh{ lc $h };
+    } );
+    return $status;
+}
 
 1;

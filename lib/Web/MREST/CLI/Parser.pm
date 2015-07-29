@@ -40,13 +40,13 @@ use warnings;
 
 use App::CELL qw( $CELL $log );
 use Test::Deep::NoTest;
-use Web::MREST::CLI::UserAgent qw( send_req );
+use Web::MREST::CLI qw( send_req );
 
 our $anything = qr/^.+$/i;
 
 =head1 NAME
 
-Web::MREST::CLI::Parser - Parser for MREST command line client
+Web::MREST::CLI::Parser - Parser for demo MREST command line client
 
 
 

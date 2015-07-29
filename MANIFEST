@@ -6,7 +6,6 @@ config/CLI_Message_en.conf
 config/CLI_MetaConfig.pm
 lib/Web/MREST/CLI.pm
 lib/Web/MREST/CLI/Parser.pm
-lib/Web/MREST/CLI/UserAgent.pm
 LICENSE
 MANIFEST			This list of files
 MANIFEST.SKIP

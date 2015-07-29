@@ -46,8 +46,8 @@ use Log::Any::Adapter;
 use Pod::Usage;
 use Term::ReadLine;
 use Try::Tiny;
-use Web::MREST::CLI::Parser;
 use Web::MREST::CLI qw( normalize_filespec );
+use Web::MREST::CLI::Parser;
 
 my $Parser = 'Web::MREST::CLI::Parser';
 
@@ -97,7 +97,7 @@ sub init_cli_client {
     init_logger();
 
     # initialize the LWP::UserAgent object
-    Web::MREST::CLI::UserAgent::init_ua();
+    Web::MREST::CLI:init_ua();
 
     return $CELL->status_ok;
 }
