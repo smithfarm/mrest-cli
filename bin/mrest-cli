@@ -46,7 +46,7 @@ use Log::Any::Adapter;
 use Pod::Usage;
 use Term::ReadLine;
 use Try::Tiny;
-use Web::MREST::CLI qw( normalize_filespec );
+use Web::MREST::CLI qw( init_cli_client normalize_filespec );
 use Web::MREST::CLI::Parser;
 
 my $Parser = 'Web::MREST::CLI::Parser';
@@ -62,6 +62,7 @@ local $Data::Dumper::Terse = 1;
 sub init_logger {
 
     my $logfile = normalize_filespec( $site->MREST_CLI_LOG_FILE );
+    print( "Log file is $logfile" );
     unlink $logfile if $site->MREST_CLI_LOG_FILE_RESET;
     # -----------------------------------------------------------
     # -- to debug configuration file loading issues, uncomment --
@@ -78,26 +79,24 @@ sub init_logger {
 #
 # CLI client initialization routine: might die
 #
-sub init_cli_client {
+sub init {
     my ( $sitedir ) = @_;
 
-    # load CLI-specific configuration parameters
-    my $target = File::ShareDir::module_dir( $Parser );
-    print "Loading configuration files from $target\n";
-    my $status = $CELL->load( debug_mode => 1, sitedir => $target );
-    die $status->text unless $status->ok;
+    die if defined( $site->MREST_CLI_LOG_FILE );
+
+    my $status = init_cli_client( distro => 'Web-MREST-CLI', sitedir => $sitedir, debug_mode => 1 );
+    return $status unless $status->ok;
+
+    die unless defined( $site->MREST_CLI_LOG_FILE );
+    
     if ( ! ( $meta->MREST_CLI_URI_BASE ) ) {
         $meta->set( 'MREST_CLI_URI_BASE', 'http://localhost:5000' );
     }
     print "Using URI base " . $meta->MREST_CLI_URI_BASE . "\n";
     print "Hopefully, a server is listening there. . .\n";
-    $log->info( "Successfully loaded configuration files from $target" );
 
     # initialize CLI-specific logger
     init_logger();
-
-    # initialize the LWP::UserAgent object
-    Web::MREST::CLI:init_ua();
 
     return $CELL->status_ok;
 }
@@ -123,7 +122,7 @@ pod2usage(1) if $help;
 
 # initialize CLI client
 my $status;
-if ( ( my $status = init_cli_client() )->not_ok ) {
+if ( ( my $status = init() )->not_ok ) {
     print '(' . $status->level . ') ' . $status->text . "\n";
     exit;
 }

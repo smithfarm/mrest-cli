@@ -13,9 +13,6 @@ my $builder = Module::Build->new(
     release_status       => 'stable',
     share_dir            => {
         dist => [ 'config' ],
-        module => {
-            'Web::MREST::CLI::Parser' => 'config',
-        },
     },
     meta_merge => {
         no_index => {

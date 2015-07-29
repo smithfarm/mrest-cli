@@ -41,6 +41,7 @@ use strict;
 use warnings;
 
 use App::CELL qw( $CELL $log $site $meta );
+use Carp qw( confess );
 use Data::Dumper;
 use Encode;
 use Exporter qw( import );  # Exporter was first released with perl 5
@@ -123,6 +124,38 @@ our $JSON = JSON->new->allow_nonref->convert_blessed->utf8->pretty;
 =head1 FUNCTIONS
 
 
+=head2 init_cli_client
+
+Takes PARAMHASH containing possible parameters C<distro>, C<sitedir>,
+and C<debug_mode>. Initializes CLI client and returns a status object.
+
+The C<distro> string should use hyphens instead of double-colons, i.e.
+C<Foo-Bar> instead of C<Foo::Bar>.
+
+=cut
+
+sub init_cli_client {
+    my ( %ARGS ) = validate( @_, {
+        distro => { type => SCALAR },
+        sitedir => { type => SCALAR|UNDEF, optional => 1 },
+        debug_mode => { type => SCALAR, default => 0 },
+    } );
+
+    foreach my $target ( File::ShareDir::dist_dir( $ARGS{'distro'} ), $ARGS{'sitedir'} ) {
+        if ( $target ) {
+            print "Loading configuration files from $target\n";
+            my $status = $CELL->load( verbose => $ARGS{'debug_mode'}, sitedir => $target );
+            die Dumper( $status ) unless $status->ok;
+        }
+    }
+
+    # initialize the LWP::UserAgent object
+    init_ua();
+
+    return $CELL->status_ok( 'MREST_CLI_INIT_OK' ); 
+}
+
+
 =head2 normalize_filespec
 
 Given a filename (path) which might be relative or absolute, return an absolute
@@ -133,6 +166,7 @@ the user we are running as.
 
 sub normalize_filespec {
     my $fs = shift;
+    confess "normalize_filespec(): missing argument!" unless $fs;
     my $is_absolute = File::Spec->file_name_is_absolute( $fs );
     if ( $is_absolute ) {
         return $fs;
@@ -148,7 +182,14 @@ Initialize the LWP::UserAgent singleton object.
 =cut
 
 sub init_ua {
-    $ua->cookie_jar( { file => normalize_filespec( $site->MREST_CLI_COOKIE_JAR ) } );
+    my $cookie_jar = $site->MREST_CLI_COOKIE_JAR;
+    if ( $cookie_jar ) {
+        $cookie_jar = normalize_filespec( $cookie_jar );
+        print( "Cookie jar: $cookie_jar\n" );
+    } else {
+        die "UFGaRAL! MREST_CLI_COOKIE_JAR site param undefined!";
+    }
+    $ua->cookie_jar( { file => $cookie_jar } );
     return;
 }
 
