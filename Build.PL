@@ -31,10 +31,8 @@ my $builder = Module::Build->new(
         'Module::Build'  => 0,
     },
     build_requires => {
-        'Cwd'            => 0,
         'File::Basename' => 0,
         'File::HomeDir'  => 0,
-        'File::Spec'     => 0,
     },
     requires => {
         'perl'           => 5.012,

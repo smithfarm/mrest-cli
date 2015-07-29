@@ -40,6 +40,10 @@ use 5.012;
 use strict;
 use warnings;
 
+use Exporter qw( import );  # Exporter was first released with perl 5
+use File::HomeDir;    # File::HomeDir was not in CORE (or so I think)
+use File::Spec;       # File::Spec was first released with perl 5.00405
+
 
 
 
@@ -63,13 +67,41 @@ our $VERSION = '0.276';
 
 =head1 DESCRIPTION
 
-foobar
+Top-level module of the L<Web::MREST::CLI> distribution. Exports some
+"generalized" functions that are used internally and might also be useful for
+writing CLI clients in general.
 
 =cut
 
 
 
+=head1 EXPORTS
+
+=cut
+
+our @EXPORT_OK = qw( normalize_filespec );
+
+
+
+
+=head1 FUNCTIONS
+
+=head2 normalize_filespec
+
+Given a filename (path) which might be relative or absolute, return an absolute
+version. If the path was relative, it will be anchored to the home directory of
+the user we are running as.
+
+=cut
+
+sub normalize_filespec {
+    my $fs = shift;
+    my $is_absolute = File::Spec->file_name_is_absolute( $fs );
+    if ( $is_absolute ) {
+        return $fs;
+    }
+    return File::Spec->catfile( File::HomeDir->my_home, $fs );
+}
+
 
 1;
-
-

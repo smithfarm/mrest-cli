@@ -46,8 +46,6 @@ use App::CELL qw( $CELL $log $site $meta );
 use Data::Dumper;
 use Encode;
 use Exporter qw( import );
-use File::HomeDir;
-use File::Spec;
 use HTTP::Request::Common qw( GET PUT POST DELETE );
 use JSON;
 use LWP::UserAgent;
@@ -56,6 +54,7 @@ use LWP::Protocol::https;
 #print "LWP::Protocol::https: ".LWP::Protocol::https->VERSION,"\n";
 use Params::Validate qw( :all );
 use URI::Escape;
+use Web::MREST::CLI qw( normalize_filespec );
 
 my %sh;
 our $JSON = JSON->new->allow_nonref->convert_blessed->utf8->pretty;
@@ -83,7 +82,7 @@ Web::MREST::CLI::UserAgent - HTTP user agent for command-line client
 
 =cut
 
-our @EXPORT_OK = qw( normalize_filespec send_req );
+our @EXPORT_OK = qw( send_req );
 
 
 
@@ -113,24 +112,6 @@ my %methods = (
 
 
 =head1 FUNCTIONS
-
-
-=head2 normalize_filespec
-
-Given a filename (path) which might be relative or absolute, return an absolute
-version. If the path was relative, it will be anchored to the home directory of
-the user we are running as.
-
-=cut
-
-sub normalize_filespec {
-    my $fs = shift;
-    my $is_absolute = File::Spec->file_name_is_absolute( $fs );
-    if ( $is_absolute ) {
-        return $fs;
-    }
-    return File::Spec->catfile( File::HomeDir->my_home, $fs );
-}
 
 
 =head2 init_ua
