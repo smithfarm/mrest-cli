@@ -41,6 +41,7 @@ use strict;
 use warnings;
 
 use App::CELL qw( $CELL $log $site $meta );
+use App::CELL::Test qw( _touch );
 use Carp qw( confess );
 use Data::Dumper;
 use Encode;
@@ -49,6 +50,7 @@ use File::HomeDir;    # File::HomeDir was not in CORE (or so I think)
 use File::Spec;       # File::Spec was first released with perl 5.00405
 use HTTP::Request::Common qw( GET PUT POST DELETE );
 use JSON;
+use Log::Any::Adapter;
 use LWP::UserAgent;
 use LWP::Protocol::https;
 #print "LWP::UserAgent: ".LWP::UserAgent->VERSION,"\n";
@@ -138,13 +140,20 @@ sub init_cli_client {
     my ( %ARGS ) = validate( @_, {
         distro => { type => SCALAR },
         sitedir => { type => SCALAR|UNDEF, optional => 1 },
-        debug_mode => { type => SCALAR, default => 0 },
+        early_debug => { type => SCALAR, optional => 1 },
     } );
+
+    my $tf = $ARGS{'early_debug'};
+    if ( $tf ) { 
+        _touch( $tf );
+        Log::Any::Adapter->set( 'File', $tf );
+        $log->debug( "Web::MREST::init activating early debug logging to $tf" );
+    }   
 
     foreach my $target ( File::ShareDir::dist_dir( $ARGS{'distro'} ), $ARGS{'sitedir'} ) {
         if ( $target ) {
             print "Loading configuration files from $target\n";
-            my $status = $CELL->load( verbose => $ARGS{'debug_mode'}, sitedir => $target );
+            my $status = $CELL->load( verbose => 1, sitedir => $target );
             die Dumper( $status ) unless $status->ok;
         }
     }

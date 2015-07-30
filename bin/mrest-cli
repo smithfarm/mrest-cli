@@ -80,11 +80,11 @@ sub init_logger {
 # CLI client initialization routine: might die
 #
 sub init {
-    my ( $sitedir ) = @_;
+    my ( $early_debug ) = @_;
 
     die if defined( $site->MREST_CLI_LOG_FILE );
 
-    my $status = init_cli_client( distro => 'Web-MREST-CLI', sitedir => $sitedir, debug_mode => 1 );
+    my $status = init_cli_client( distro => 'Web-MREST-CLI', early_debug => $early_debug );
     return $status unless $status->ok;
 
     die unless defined( $site->MREST_CLI_LOG_FILE );
@@ -114,15 +114,20 @@ sub get_prompt { "$Parser> " }
 # process command-line options
 my $help = 0;
 my $sitedir;
+my $early_debug;
 GetOptions( 
     'help|?' => \$help, 
-    'sitedir|s=s' => \$sitedir,
+    'early-debug|e=s' => \$early_debug,
 );
 pod2usage(1) if $help;
 
+if ( $early_debug ) {
+    print "Early debugging activated; will log early messages to $early_debug\n";
+}
+
 # initialize CLI client
 my $status;
-if ( ( my $status = init() )->not_ok ) {
+if ( ( my $status = init( $early_debug ) )->not_ok ) {
     print '(' . $status->level . ') ' . $status->text . "\n";
     exit;
 }
