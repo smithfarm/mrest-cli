@@ -21,9 +21,8 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "Cwd" : "0",
             "File::Basename" : "0",
-            "File::Spec" : "0"
+            "File::HomeDir" : "0"
          }
       },
       "configure" : {
@@ -36,6 +35,7 @@
             "App::CELL" : "0.205",
             "Data::Dumper" : "0",
             "Encode" : "0",
+            "File::HomeDir" : "0",
             "File::ShareDir" : "1.00",
             "Getopt::Long" : "2.32",
             "HTTP::Request::Common" : "0",
@@ -56,13 +56,10 @@
    "provides" : {
       "Web::MREST::CLI" : {
          "file" : "lib/Web/MREST/CLI.pm",
-         "version" : "0.276"
+         "version" : "0.277"
       },
       "Web::MREST::CLI::Parser" : {
          "file" : "lib/Web/MREST/CLI/Parser.pm"
-      },
-      "Web::MREST::CLI::UserAgent" : {
-         "file" : "lib/Web/MREST/CLI/UserAgent.pm"
       }
    },
    "release_status" : "stable",
@@ -71,5 +68,5 @@
          "http://opensource.org/licenses/bsd-license.php"
       ]
    },
-   "version" : "0.276"
+   "version" : "0.277"
 }
