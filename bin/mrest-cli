@@ -62,7 +62,7 @@ local $Data::Dumper::Terse = 1;
 sub init_logger {
 
     my $logfile = normalize_filespec( $site->MREST_CLI_LOG_FILE );
-    print( "Log file is $logfile" );
+    print( "Log file is $logfile\n" );
     unlink $logfile if $site->MREST_CLI_LOG_FILE_RESET;
     # -----------------------------------------------------------
     # -- to debug configuration file loading issues, uncomment --

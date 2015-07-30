@@ -140,15 +140,20 @@ sub init_cli_client {
     my ( %ARGS ) = validate( @_, {
         distro => { type => SCALAR },
         sitedir => { type => SCALAR|UNDEF, optional => 1 },
-        early_debug => { type => SCALAR, optional => 1 },
+        early_debug => { type => SCALAR|UNDEF, optional => 1 },
     } );
 
     my $tf = $ARGS{'early_debug'};
-    if ( $tf ) { 
-        _touch( $tf );
-        Log::Any::Adapter->set( 'File', $tf );
-        $log->debug( "Web::MREST::init activating early debug logging to $tf" );
-    }   
+    if ( $tf ) {
+        _touch $tf;
+        if ( -r $tf and -w $tf ) {
+            unlink $tf;
+            Log::Any::Adapter->set( 'File', $tf );
+            $log->debug( __PACKAGE__ . "::init_cli_client activating early debug logging to $tf" );
+        } else {
+            print "Given unreadable/unwritable early debugging filespec $tf\n";
+        }
+    }
 
     foreach my $target ( File::ShareDir::dist_dir( $ARGS{'distro'} ), $ARGS{'sitedir'} ) {
         if ( $target ) {
