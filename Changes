@@ -11,10 +11,12 @@ Revision history for Web::MREST::CLI
 
 0.277  2015-07-30 15:10 CEST
 - Implement early debugging feature for mrest-cli
-- Implement a generalized init_cli_client() routine in CLI.pm and call it from bin/mrest-cli
+- Implement a generalized init_cli_client() routine in CLI.pm and call it
+  from bin/mrest-cli
 - Drop UserAgent.pm; move contents to Web::MREST::CLI
-- Move normalize_filespec() from Web::MREST::CLI::UserAgent to Web::MREST::CLI
+- Move normalize_filespec() from Web::MREST::CLI::UserAgent to
+  Web::MREST::CLI
 - Build.PL: declare File::HomeDir dependency
 
 0.278 2016-01-10 16:40 CET
-
+- CLI.pm: be more careful with early debugging filespec provided by user
