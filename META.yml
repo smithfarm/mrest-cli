@@ -8,7 +8,7 @@ build_requires:
 configure_requires:
   Module::Build: '0'
 dynamic_config: 1
-generated_by: 'Module::Build version 0.4212, CPAN::Meta::Converter version 2.142060'
+generated_by: 'Module::Build version 0.4205, CPAN::Meta::Converter version 2.150005'
 license: bsd
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -20,7 +20,7 @@ no_index:
 provides:
   Web::MREST::CLI:
     file: lib/Web/MREST/CLI.pm
-    version: '0.277'
+    version: '0.278'
   Web::MREST::CLI::Parser:
     file: lib/Web/MREST/CLI/Parser.pm
 requires:
@@ -44,4 +44,5 @@ requires:
   perl: '5.012'
 resources:
   license: http://opensource.org/licenses/bsd-license.php
-version: '0.277'
+version: '0.278'
+x_serialization_backend: 'CPAN::Meta::YAML version 0.012'

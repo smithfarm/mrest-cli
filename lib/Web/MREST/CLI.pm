@@ -70,11 +70,11 @@ Web::MREST::CLI - CLI components for Web::MEST-based applications
 
 =head1 VERSION
 
-Version 0.277
+Version 0.278
 
 =cut
 
-our $VERSION = '0.277';
+our $VERSION = '0.278';
 
 
 
