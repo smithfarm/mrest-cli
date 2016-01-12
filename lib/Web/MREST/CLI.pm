@@ -292,7 +292,13 @@ sub send_req {
         if ( ref( $perl_scalar ) ) {
             # if it's a hash, we have faith that it will bless into a status object
             $status = bless $perl_scalar, 'App::CELL::Status';
-        } else { 
+        } elsif ( $perl_scalar eq 'Unauthorized' ) { 
+            $status = $CELL->status_err( 
+                'MREST_CLI_UNAUTHORIZED', 
+                payload => $response->code . ' ' . $response->message
+            );
+            $log->error("Unauthorized");
+        } else {
             $status = $CELL->status_err( 'MREST_OTHER_ERROR_REPORT_THIS_AS_A_BUG', payload => $perl_scalar );
             $log->error("Unexpected HTTP response ->$perl_scalar<-" );
         }
