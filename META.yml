@@ -20,7 +20,7 @@ no_index:
 provides:
   Web::MREST::CLI:
     file: lib/Web/MREST/CLI.pm
-    version: '0.278'
+    version: '0.279'
   Web::MREST::CLI::Parser:
     file: lib/Web/MREST/CLI/Parser.pm
 requires:
@@ -44,5 +44,5 @@ requires:
   perl: '5.012'
 resources:
   license: http://opensource.org/licenses/bsd-license.php
-version: '0.278'
+version: '0.279'
 x_serialization_backend: 'CPAN::Meta::YAML version 0.012'

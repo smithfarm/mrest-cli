@@ -20,3 +20,9 @@ Revision history for Web::MREST::CLI
 
 0.278 2016-01-10 16:40 CET
 - CLI.pm: be more careful with early debugging filespec provided by user
+
+0.279 2016-01-12 15:19 CET
+- Changes: manual edit
+- release.sh: tweak release script
+- CLI.pm: fix dochazka-cli bug #26
+
