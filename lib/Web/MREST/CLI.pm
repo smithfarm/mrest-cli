@@ -278,16 +278,16 @@ sub send_req {
     my $content = $response->content;
     #$log->debug( "Response entity is " . Dumper( $content ) );
     if ( $content ) {
-        my $unicode_content = decode( "UTF-8", $content );
+        #my $unicode_content = decode( "UTF-8", $content );
 
         # if the content is a bare string, enclose it in double quotes
-        if ( $unicode_content =~ m/^[^\{].*[^\}]$/s ) {
-            $unicode_content =~ s/\n//g;
+        if ( $content =~ m/^[^\{].*[^\}]$/s ) {
+            $content =~ s/\n//g;
             $log->debug( "Adding double quotes to bare JSON string" );
-            $unicode_content = '"' . $unicode_content . '"';
+            $content = '"' . $content . '"';
         }
 
-        my $perl_scalar = $JSON->decode( $unicode_content );
+        my $perl_scalar = $JSON->decode( $content );
 
         if ( ref( $perl_scalar ) ) {
             # if it's a hash, we have faith that it will bless into a status object
