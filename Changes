@@ -26,3 +26,6 @@ Revision history for Web::MREST::CLI
 - release.sh: tweak release script
 - CLI.pm: fix dochazka-cli bug #26
 
+0.280 2016-01-14 16:05 CET
+- CLI.pm->send_req: do not UTF-8 decode the response
+
