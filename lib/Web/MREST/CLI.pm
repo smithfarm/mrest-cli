@@ -139,7 +139,7 @@ C<Foo-Bar> instead of C<Foo::Bar>.
 sub init_cli_client {
     my ( %ARGS ) = validate( @_, {
         distro => { type => SCALAR },
-        sitedir => { type => SCALAR|UNDEF, optional => 1 },
+        sitedir => { type => ARRAYREF|SCALAR|UNDEF, optional => 1 },
         early_debug => { type => SCALAR|UNDEF, optional => 1 },
     } );
 
@@ -155,12 +155,22 @@ sub init_cli_client {
         }
     }
 
-    foreach my $target ( File::ShareDir::dist_dir( $ARGS{'distro'} ), $ARGS{'sitedir'} ) {
-        if ( $target ) {
-            print "Loading configuration files from $target\n";
-            my $status = $CELL->load( verbose => 1, sitedir => $target );
-            die Dumper( $status ) unless $status->ok;
+    my @targets;
+    if ( defined( $ARGS{'sitedir'} ) ) {
+        if ( ref( $ARGS{'sitedir'} ) eq 'ARRAY' ) {
+            @targets = @{ $ARGS{'sitedir'} };
         }
+        if ( ref( $ARGS{'sitedir'} ) eq '' ) {
+            @targets = ( $ARGS{'sitedir'} );
+        }
+    }
+    my $target = File::ShareDir::dist_dir( $ARGS{'distro'} );
+    my $status = $CELL->load( verbose => 1, sitedir => $target );
+    die $status->text unless $status->ok;
+    foreach my $target ( @targets ) {
+        print "Loading configuration files from $target\n";
+        $status = $CELL->load( verbose => 1, sitedir => $target );
+        print "WARNING: " . $status->text . "\n" unless $status->ok;
     }
 
     # initialize the LWP::UserAgent object
