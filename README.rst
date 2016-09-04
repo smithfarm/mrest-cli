@@ -8,3 +8,8 @@ App::MREST::CLI
     :target: https://badge.fury.io/pl/App-MREST-CLI
 
 CLI components for Web::MREST
+
+Documentation
+=============
+
+See https://metacpan.org/pod/Web::MREST::CLI
