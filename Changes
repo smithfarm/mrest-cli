@@ -29,3 +29,7 @@ Revision history for Web::MREST::CLI
 0.280 2016-01-14 16:05 CET
 - CLI.pm->send_req: do not UTF-8 decode the response
 
+0.281 2016-09-04 19:54 CEST
+- init_cli_client: optionally take arrayref of sitedirs
+- Travis CI
+
