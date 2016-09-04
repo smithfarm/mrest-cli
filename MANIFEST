@@ -12,3 +12,4 @@ MANIFEST.SKIP
 META.json
 META.yml
 README.rst
+t/001-noop.t
