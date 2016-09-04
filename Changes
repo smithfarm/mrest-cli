@@ -36,3 +36,6 @@ Revision history for Web::MREST::CLI
 0.282 2016-09-04 19:56 CEST
 - MANIFEST: now we have README.rst only
 
+0.283 2016-09-04 19:58 CEST
+- MANIFEST: add t/001-noop.t
+
